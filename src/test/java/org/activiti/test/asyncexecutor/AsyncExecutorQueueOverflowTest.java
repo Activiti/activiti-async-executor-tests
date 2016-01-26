@@ -173,11 +173,11 @@ public class AsyncExecutorQueueOverflowTest {
     }
   }
 
-  private ProcessEngine createProcessEngine(int queueSize, String dbSchemeSetting) {
+  private ProcessEngine createProcessEngine(int queueSize, String dbSchemaSetting) {
     StandaloneProcessEngineConfiguration config = new StandaloneProcessEngineConfiguration();
     
     config.setDataSource(dataSource);
-    config.setDatabaseSchemaUpdate(dbSchemeSetting);
+    config.setDatabaseSchemaUpdate(dbSchemaSetting);
     
     config.setAsyncExecutorEnabled(true);
     config.setAsyncExecutorActivate(true);
