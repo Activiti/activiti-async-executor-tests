@@ -40,6 +40,7 @@ public class AsyncExecutorQueueOverflowTest {
   
   private static final Logger logger = LoggerFactory.getLogger(AsyncExecutorQueueOverflowTest.class);
   
+  protected static String jdbcSchema;
   protected static DataSource dataSource;
   
   @BeforeClass
@@ -55,6 +56,9 @@ public class AsyncExecutorQueueOverflowTest {
     String jdbcUsername = defaultProperties.getProperty("jdbc.username");
     String jdbcPassword = defaultProperties.getProperty("jdbc.password");
     
+    // We need to set it on the engine later, hence why it's handles differently
+    jdbcSchema = defaultProperties.getProperty("jdbc.schema");
+    
     Properties dbProperties = new Properties();
     try {
       dbProperties.load(AsyncExecutorQueueOverflowTest.class.getClassLoader().getResourceAsStream("db.properties"));
@@ -63,11 +67,11 @@ public class AsyncExecutorQueueOverflowTest {
       jdbcDriver = dbProperties.getProperty("jdbc.driver");
       jdbcUsername = dbProperties.getProperty("jdbc.username");
       jdbcPassword = dbProperties.getProperty("jdbc.password");
+      jdbcSchema = dbProperties.getProperty("jdbc.schema");
       
     } catch (Exception e) {
       logger.warn("Exception while loading db.properties. Using defaults");
     }
-    
 
     logger.info("Using database " + jdbcUrl);
     
@@ -77,7 +81,7 @@ public class AsyncExecutorQueueOverflowTest {
     ds.setDriverClass(jdbcDriver);
     ds.setUser(jdbcUsername);
     ds.setPassword(jdbcPassword);
-
+    
     // Pool config: see http://www.mchange.com/projects/c3p0/#configuration
     ds.setInitialPoolSize(50);
     ds.setMinPoolSize(10);
@@ -183,6 +187,11 @@ public class AsyncExecutorQueueOverflowTest {
     config.setAsyncExecutorActivate(true);
     config.setAsyncExecutorThreadPoolQueueSize(queueSize);
     config.setAsyncExecutorDefaultAsyncJobAcquireWaitTime(500);
+    
+    if (jdbcSchema != null && !"".equals(jdbcSchema)) {
+      config.setDatabaseSchema(jdbcSchema);
+    }
+    
     return config.buildProcessEngine();
   }
   
