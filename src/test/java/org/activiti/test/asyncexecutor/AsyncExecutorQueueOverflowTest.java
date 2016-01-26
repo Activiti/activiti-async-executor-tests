@@ -164,16 +164,26 @@ public class AsyncExecutorQueueOverflowTest {
   }
 
   protected ProcessEngine initProcessEngineWithJobQueueSize(int queueSize) throws Exception{
+    try {
+      return createProcessEngine(queueSize, "drop-create");
+    } catch (Exception e) {
+      // oracle throwing a SqlException ... and the engine catching a RuntimeException...
+      // Solving it by recreating the process engine without the drop
+      return createProcessEngine(queueSize, "true");
+    }
+  }
+
+  private ProcessEngine createProcessEngine(int queueSize, String dbSchemeSetting) {
     StandaloneProcessEngineConfiguration config = new StandaloneProcessEngineConfiguration();
     
     config.setDataSource(dataSource);
-    config.setDatabaseSchemaUpdate("drop-create");
+    config.setDatabaseSchemaUpdate(dbSchemeSetting);
     
     config.setAsyncExecutorEnabled(true);
     config.setAsyncExecutorActivate(true);
     config.setAsyncExecutorThreadPoolQueueSize(queueSize);
     config.setAsyncExecutorDefaultAsyncJobAcquireWaitTime(500);
-    return config.buildProcessEngine();  
+    return config.buildProcessEngine();
   }
   
   protected static Date createDate(int year, int month, int day, int hour, int minute, int seconds) {
