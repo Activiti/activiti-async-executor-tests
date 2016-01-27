@@ -10,10 +10,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.activiti.test.asyncexecutor;
+package org.activiti5.test.asyncexecutor;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -25,13 +24,12 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
+import org.activiti.test.asyncexecutor.DataSourceBuilder;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
  * @author Joram Barrez
@@ -40,54 +38,13 @@ public class AsyncExecutorQueueOverflowTest {
   
   private static final Logger logger = LoggerFactory.getLogger(AsyncExecutorQueueOverflowTest.class);
   
-  protected static String jdbcSchema;
+  protected static DataSourceBuilder dataSourceBuilder;
   protected static DataSource dataSource;
   
   @BeforeClass
   public static void setupDataSource() throws Exception {
-    dataSource = createDataSource();
-  }
-  
-  protected static ComboPooledDataSource createDataSource() throws Exception {
-    Properties defaultProperties = new Properties();
-    defaultProperties.load(AsyncExecutorQueueOverflowTest.class.getClassLoader().getResourceAsStream("default-db.properties"));
-    String jdbcUrl = defaultProperties.getProperty("jdbc.url");
-    String jdbcDriver = defaultProperties.getProperty("jdbc.driver");
-    String jdbcUsername = defaultProperties.getProperty("jdbc.username");
-    String jdbcPassword = defaultProperties.getProperty("jdbc.password");
-    
-    // We need to set it on the engine later, hence why it's handles differently
-    jdbcSchema = defaultProperties.getProperty("jdbc.schema");
-    
-    Properties dbProperties = new Properties();
-    try {
-      dbProperties.load(AsyncExecutorQueueOverflowTest.class.getClassLoader().getResourceAsStream("db.properties"));
-      
-      jdbcUrl = dbProperties.getProperty("jdbc.url");
-      jdbcDriver = dbProperties.getProperty("jdbc.driver");
-      jdbcUsername = dbProperties.getProperty("jdbc.username");
-      jdbcPassword = dbProperties.getProperty("jdbc.password");
-      jdbcSchema = dbProperties.getProperty("jdbc.schema");
-      
-    } catch (Exception e) {
-      logger.warn("Exception while loading db.properties. Using defaults");
-    }
-
-    logger.info("Using database " + jdbcUrl);
-    
-    // Connection settings
-    ComboPooledDataSource ds = new ComboPooledDataSource();
-    ds.setJdbcUrl(jdbcUrl);
-    ds.setDriverClass(jdbcDriver);
-    ds.setUser(jdbcUsername);
-    ds.setPassword(jdbcPassword);
-    
-    // Pool config: see http://www.mchange.com/projects/c3p0/#configuration
-    ds.setInitialPoolSize(50);
-    ds.setMinPoolSize(10);
-    ds.setMaxPoolSize(100);
-    ds.setAcquireIncrement(5);
-    return ds;
+    dataSourceBuilder = new DataSourceBuilder();
+    dataSource = dataSourceBuilder.createDataSource();
   }
   
   @Test
@@ -188,6 +145,7 @@ public class AsyncExecutorQueueOverflowTest {
     config.setAsyncExecutorThreadPoolQueueSize(queueSize);
     config.setAsyncExecutorDefaultAsyncJobAcquireWaitTime(500);
     
+    String jdbcSchema = dataSourceBuilder.getJdbcSchema();
     if (jdbcSchema != null && !"".equals(jdbcSchema)) {
       config.setDatabaseSchema(jdbcSchema);
     }
