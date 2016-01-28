@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef" xmlns:modeler="http://activiti.com/modeler" modeler:version="1.0en" modeler:exportDateTime="20160128171331084" modeler:modelId="1" modeler:modelVersion="1" modeler:modelLastUpdated="1453997608680">
+  <process id="parallelExclusiveServiceTasks" name="parallelExclusiveServiceTasks" isExecutable="true">
+    <sequenceFlow id="sid-0A7BE5FD-3D1A-41AF-A63A-2559C1987815" sourceRef="sid-32C4B9A1-41EB-439C-A316-132A3B50480E" targetRef="sid-929D76AF-E131-49E4-9585-CCF0BE33EB09"/>
+    <serviceTask id="sid-929D76AF-E131-49E4-9585-CCF0BE33EB09" name="ServiceTask1" activiti:async="true" activiti:class="org.activiti.test.asyncexecutor.delegate.SlowPassthroughServiceTask"/>
+    <serviceTask id="sid-576DEE7F-CC73-4677-82B7-BA9032D317CD" name="ServiceTask2" activiti:async="true" activiti:class="org.activiti.test.asyncexecutor.delegate.SlowPassthroughServiceTask"/>
+    <serviceTask id="sid-2BB07C85-9C38-4EBF-89D4-FB1C92A99769" name="ServiceTask3" activiti:async="true" activiti:class="org.activiti.test.asyncexecutor.delegate.SlowPassthroughServiceTask"/>
+    <sequenceFlow id="sid-B68246DD-8BE6-440D-BCEB-C9FBDB0DB07D" sourceRef="sid-32C4B9A1-41EB-439C-A316-132A3B50480E" targetRef="sid-576DEE7F-CC73-4677-82B7-BA9032D317CD"/>
+    <sequenceFlow id="sid-0FBD122A-7721-48DD-B632-EB4A7EA40B7E" sourceRef="sid-32C4B9A1-41EB-439C-A316-132A3B50480E" targetRef="sid-2BB07C85-9C38-4EBF-89D4-FB1C92A99769"/>
+    <serviceTask id="sid-78C27B64-60D6-4997-98A6-F98518B7C08E" name="ServiceTask4" activiti:async="true" activiti:class="org.activiti.test.asyncexecutor.delegate.SlowPassthroughServiceTask"/>
+    <serviceTask id="sid-E6D266B9-B9EB-469F-AD26-66730265889D" name="ServiceTask6" activiti:async="true" activiti:class="org.activiti.test.asyncexecutor.delegate.SlowPassthroughServiceTask"/>
+    <serviceTask id="sid-203906C3-1965-434F-BD19-0892CAED8961" name="ServiceTask5" activiti:async="true" activiti:class="org.activiti.test.asyncexecutor.delegate.SlowPassthroughServiceTask"/>
+    <serviceTask id="sid-D7DD5160-1A23-47E0-B89F-F2E4C53B6714" name="ServiceTask8" activiti:async="true" activiti:class="org.activiti.test.asyncexecutor.delegate.SlowPassthroughServiceTask"/>
+    <serviceTask id="sid-851394C9-D624-43FD-8E71-BC6C3CDACCB2" name="ServiceTask7" activiti:async="true" activiti:class="org.activiti.test.asyncexecutor.delegate.SlowPassthroughServiceTask"/>
+    <serviceTask id="sid-9A50CB7D-4D6F-42F4-A732-559EBD9365C0" name="ServiceTask9" activiti:async="true" activiti:class="org.activiti.test.asyncexecutor.delegate.SlowPassthroughServiceTask"/>
+    <sequenceFlow id="sid-B9BF808D-9B16-4753-AA4B-2D7E5B06A9DE" sourceRef="sid-929D76AF-E131-49E4-9585-CCF0BE33EB09" targetRef="sid-78C27B64-60D6-4997-98A6-F98518B7C08E"/>
+    <sequenceFlow id="sid-2066FD7E-59DF-4D1F-919B-A7D9C4B3A0CF" sourceRef="sid-576DEE7F-CC73-4677-82B7-BA9032D317CD" targetRef="sid-203906C3-1965-434F-BD19-0892CAED8961"/>
+    <sequenceFlow id="sid-338C94AB-CD01-4AF5-B10A-14BD3D23AA51" sourceRef="sid-2BB07C85-9C38-4EBF-89D4-FB1C92A99769" targetRef="sid-E6D266B9-B9EB-469F-AD26-66730265889D"/>
+    <sequenceFlow id="sid-E1AD2852-9B97-482D-B45B-5AA4329FA516" sourceRef="sid-78C27B64-60D6-4997-98A6-F98518B7C08E" targetRef="sid-851394C9-D624-43FD-8E71-BC6C3CDACCB2"/>
+    <sequenceFlow id="sid-47C19BFF-3460-40F3-A3E2-FF94E8977770" sourceRef="sid-203906C3-1965-434F-BD19-0892CAED8961" targetRef="sid-D7DD5160-1A23-47E0-B89F-F2E4C53B6714"/>
+    <sequenceFlow id="sid-D2B02F61-D4FD-42A8-804C-AC5566421EC5" sourceRef="sid-E6D266B9-B9EB-469F-AD26-66730265889D" targetRef="sid-9A50CB7D-4D6F-42F4-A732-559EBD9365C0"/>
+    <parallelGateway id="sid-32C4B9A1-41EB-439C-A316-132A3B50480E" activiti:async="true"/>
+    <startEvent id="sid-C4236F79-2967-4F62-969D-F83DE14DA747"/>
+    <sequenceFlow id="sid-4407D80E-1B57-4DBD-9BAD-2027E3ACC5C2" sourceRef="sid-C4236F79-2967-4F62-969D-F83DE14DA747" targetRef="sid-32C4B9A1-41EB-439C-A316-132A3B50480E"/>
+    <sequenceFlow id="sid-543BFB8E-29FD-4E38-9213-428D231525C6" sourceRef="sid-851394C9-D624-43FD-8E71-BC6C3CDACCB2" targetRef="sid-EA3E29E1-2179-4E49-93B3-DBF48072F673"/>
+    <parallelGateway id="sid-EA3E29E1-2179-4E49-93B3-DBF48072F673" activiti:async="true" />
+    <sequenceFlow id="sid-9384F501-D535-457F-ADA7-D22F2B291B02" sourceRef="sid-D7DD5160-1A23-47E0-B89F-F2E4C53B6714" targetRef="sid-EA3E29E1-2179-4E49-93B3-DBF48072F673"/>
+    <sequenceFlow id="sid-1128BDCB-DE16-4589-A5E3-0A20B91C68F9" sourceRef="sid-9A50CB7D-4D6F-42F4-A732-559EBD9365C0" targetRef="sid-EA3E29E1-2179-4E49-93B3-DBF48072F673"/>
+    <sequenceFlow id="sid-17E79FE8-A918-427F-8FCE-1275F1BCD02E" sourceRef="sid-EA3E29E1-2179-4E49-93B3-DBF48072F673" targetRef="taskBeforeEnd"/>
+    <userTask id="taskBeforeEnd" name="taskBeforeEnd" />
+    <sequenceFlow id="finalSequenceFlow" sourceRef="taskBeforeEnd" targetRef="sid-E5B0FED3-F489-4304-A903-568A923579FC"/>
+    <endEvent id="sid-E5B0FED3-F489-4304-A903-568A923579FC"/>
+  </process>
+</definitions>

@@ -15,11 +15,11 @@
         <timeCycle>0 0 9 ? * MON-FRI *</timeCycle>
       </timerEventDefinition>
     </boundaryEvent>
-    <scriptTask id="theScriptTask" name="The Script task" activiti:async="true" scriptFormat="javascript" activiti:autoStoreVariables="false">
+    <scriptTask id="theScriptTask" name="The Script task" activiti:async="true" activiti:exclusive="false" scriptFormat="javascript" activiti:autoStoreVariables="false">
       <script>java.lang.System.out.println('Executing script');</script>
     </scriptTask>
     <sequenceFlow id="sid-4B829DAB-4214-48B7-8483-32EC612C254E" sourceRef="sid-4FB51C1A-85C8-4672-B786-329BBD8135E4" targetRef="theScriptTask"/>
-    <serviceTask id="theServiceTask" name="The Service task" activiti:async="true" activiti:class="org.activiti.test.asyncexecutor.delegate.NoopServiceTask"/>
+    <serviceTask id="theServiceTask" name="The Service task" activiti:async="true" activiti:exclusive="false" activiti:class="org.activiti.test.asyncexecutor.delegate.NoopServiceTask"/>
     <sequenceFlow id="sid-5DE7FFC5-0E2C-4668-AF90-98D6F0DA6923" sourceRef="theScriptTask" targetRef="theServiceTask"/>
     <endEvent id="sid-96635F23-3CA3-4684-9EEF-A6DBA6EC16D0"/>
     <sequenceFlow id="sid-A292FF93-9456-41F0-9FAB-CBCFC1586DC3" sourceRef="theServiceTask" targetRef="sid-96635F23-3CA3-4684-9EEF-A6DBA6EC16D0"/>
