@@ -183,7 +183,6 @@ public class AsyncExecutorTest {
     config.setDataSource(dataSource);
     config.setDatabaseSchemaUpdate(dbSchemaSetting);
     
-    config.setAsyncExecutorEnabled(true);
     config.setAsyncExecutorActivate(true);
     config.setAsyncExecutorThreadPoolQueueSize(queueSize);
     config.setAsyncExecutorDefaultAsyncJobAcquireWaitTime(100);
