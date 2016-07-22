@@ -49,7 +49,7 @@
                   <tasks>
                     <echo message="Copying db properties for database ${database}" />
                     <copy
-                      file="${user.home}/.activiti/jdbc/build.${database}.properties"
+                      file="${user.home}/.activiti/jdbc/build.activiti6.${database}.properties"
                       tofile="target/test-classes/db.properties" overwrite="true" />
                   </tasks>
                 </configuration>
