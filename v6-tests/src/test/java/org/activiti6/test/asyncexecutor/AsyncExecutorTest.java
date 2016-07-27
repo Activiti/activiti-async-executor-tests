@@ -11,11 +11,8 @@
  * limitations under the License.
  */
 package org.activiti6.test.asyncexecutor;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -24,17 +21,9 @@ import javax.sql.DataSource;
 
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.ProcessEngineLifecycleListener;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
-import org.activiti.engine.impl.db.Entity;
-import org.activiti.engine.impl.db.EntityDependencyOrder;
-import org.activiti.engine.impl.interceptor.Command;
-import org.activiti.engine.impl.interceptor.CommandContext;
-import org.activiti.engine.impl.persistence.entity.HistoricScopeInstanceEntityImpl;
-import org.activiti.engine.impl.persistence.entity.PropertyEntityImpl;
-import org.activiti.engine.impl.persistence.entity.TableDataManagerImpl;
 import org.activiti.test.asyncexecutor.DataSourceBuilder;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -180,7 +169,7 @@ public class AsyncExecutorTest {
   
   protected ProcessEngine initProcessEngineWithJobQueueSize(int queueSize) throws Exception{
     try {
-      return createProcessEngine(queueSize, "true");
+      return createProcessEngine(queueSize, "drop-create");
     } catch (Exception e) {
       // oracle throwing a SqlException ... and the engine catching a RuntimeException...
       // Solving it by recreating the process engine without the drop
@@ -203,50 +192,6 @@ public class AsyncExecutorTest {
     if (jdbcSchema != null && !"".equals(jdbcSchema)) {
       config.setDatabaseSchema(jdbcSchema);
     }
-    
-    // Since there are different tables in v5 vs v6 (for example the job tables), we can't use
-    // 'drop-create' here as this won't work when going from v5->v6.
-    // Hence, why we're doing a manual delete instead
-    config.setProcessEngineLifecycleListener(new ProcessEngineLifecycleListener() {
-      
-      @Override
-      public void onProcessEngineBuilt(ProcessEngine processEngine) {
-        processEngine.getManagementService().executeCommand(new Command<Void>() {
-          public Void execute(CommandContext commandContext) {
-            for (Class<? extends Entity> entity : EntityDependencyOrder.DELETE_ORDER) {
-              if (!entity.equals(HistoricScopeInstanceEntityImpl.class) && !entity.equals(PropertyEntityImpl.class)) {
-                Statement statement = null;
-                try {
-                  statement = commandContext.getDbSqlSession().getSqlSession().getConnection().createStatement();
-                  String table = entityClassToTable(entity);
-                  if (table != null) {
-                    System.out.println("Delete from " + table);
-                    statement.executeUpdate("delete from " + table);
-                  }
-                } catch (SQLException e) {
-                  e.printStackTrace();
-                } finally {
-                  if (statement != null) {
-                    try {
-                      statement.close();
-                    } catch (SQLException e) {
-                      e.printStackTrace();
-                    }
-                  }
-                }
-              }
-            }
-            return null;
-          }
-        });
-      }
-      
-      @Override
-      public void onProcessEngineClosed(ProcessEngine processEngine) {
-        
-      }
-      
-    });
     
     return config.buildProcessEngine();
   }
@@ -301,21 +246,6 @@ public class AsyncExecutorTest {
   
   public static interface WaitCondition {
     boolean evaluate(ProcessEngine processEngine);
-  }
-  
-  protected static String entityClassToTable(Class<? extends Entity> entityClass) {
-    Map<Class<? extends Entity>, String> entityToTableNameMap = TableDataManagerImpl.entityToTableNameMap;
-    if (entityToTableNameMap.containsKey(entityClass)) {
-      return entityToTableNameMap.get(entityClass);
-    }
-    
-    Class[] interfaces = entityClass.getInterfaces();
-    for (Class interfaceClass : interfaces) {
-      if (entityToTableNameMap.containsKey(interfaceClass)) {
-        return entityToTableNameMap.get(interfaceClass);
-      }
-    }
-    return null;
   }
 
 }
